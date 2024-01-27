@@ -8,8 +8,7 @@ from BossTimer.py import BossTimer
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
-CHANNEL_MAIN = 0
+
 bot = commands.Bot(command_prefix = '!',intents=discord.Intents.all())
 boss_timer = BossTimer()
 
