@@ -4,45 +4,42 @@ from discord.utils import get
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
-from BossTimer.py import BossTimer
+
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-
+boss_tab={}
 bot = commands.Bot(command_prefix = '!',intents=discord.Intents.all())
-boss_timer = BossTimer()
 
-@bot.command(name='chimera')
-async def resetTime(ctx):
-    print(ctx)
-    response = "s"
-    await ctx.send(response)
-
+boss_tab['a']=21
 @bot.command(name='init')
 async def initBot(ctx):
     guild = ctx.message.guild
     channel_exist = False
     for channel in guild.channels:
         print(channel.name)
-        if channel.name == 'bosstimer-by-o120d6': 
+        if channel.name == 'world-boss-spawn-log': 
             channel_exist = True
     if channel_exist:
         CHANNEL_MAIN = channel
-        channel.send("inicjalizacja pomyślna")
+        await channel.send("inicjalizacja pomyślna")
     else:
-        CHANNEL_MAIN = await guild.create_text_channel('bosstimer-by-o120d6')
+        CHANNEL_MAIN = await guild.create_text_channel('world-boss-spawn-log')
 
-@bot.command(name='reset', help='Use it like that "reset chimera"')
-async def resetBoss(ctx, boss_command: str):
-    boss_timer.resetTime(boss_command)
+@bot.command(name='adboss')
+async def adBoss(ctx, boss_name: str, boss_time: int):
+    boss_tab[boss_name] = boss_time
 
-@bot.command(name='addBoss', help='Use it like that "add chimera timetoresetinminutes"')
-async def addBoss(ctx, boss_command: str, ):
-    boss_timer.addBoss(boss_command)
+@bot.event
+async def on_message(ctx):
+    if ctx.channel.name == 'world-boss-spawn-log':
+       print(ctx.content)
+    for name in boss_tab:
+        if name in ctx.content:
+            content_string = (ctx.content+"bb")
+            #await ctx.edit(content=content_string)
+    print(boss_tab)
 
-@bot.command(name="display")
-async def displayBossTime(ctx, boss_command: str):
-    CHANNEL_MAIN.edit(0,boss_timer.textWall())
 
 
 bot.run(TOKEN)
