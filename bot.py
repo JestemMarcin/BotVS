@@ -4,7 +4,7 @@ from discord.utils import get
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
-
+from BossTimer import BossTimer
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
