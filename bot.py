@@ -4,12 +4,12 @@ from discord.utils import get
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
-from BossTimer.py import BossTimer
+from BossTimer import BossTimer
+import time
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
-CHANNEL_MAIN = 0
+CHANNEL_MAIN = False
 bot = commands.Bot(command_prefix = '!',intents=discord.Intents.all())
 boss_timer = BossTimer()
 
@@ -21,29 +21,35 @@ async def resetTime(ctx):
 
 @bot.command(name='init')
 async def initBot(ctx):
+    global CHANNEL_MAIN
     guild = ctx.message.guild
-    channel_exist = False
     for channel in guild.channels:
         print(channel.name)
         if channel.name == 'bosstimer-by-o120d6': 
-            channel_exist = True
-    if channel_exist:
-        CHANNEL_MAIN = channel
-        channel.send("inicjalizacja pomyślna")
-    else:
+            CHANNEL_MAIN = channel
+    if CHANNEL_MAIN == False:
         CHANNEL_MAIN = await guild.create_text_channel('bosstimer-by-o120d6')
+        await CHANNEL_MAINsend("inicjalizacja pomyślna "+CHANNEL_MAIN.name)
+    else:
+        await CHANNEL_MAIN.send("inicjalizacja pomyślna "+CHANNEL_MAIN.name)
 
 @bot.command(name='reset', help='Use it like that "reset chimera"')
 async def resetBoss(ctx, boss_command: str):
     boss_timer.resetTime(boss_command)
 
-@bot.command(name='addBoss', help='Use it like that "add chimera timetoresetinminutes"')
-async def addBoss(ctx, boss_command: str, ):
-    boss_timer.addBoss(boss_command)
+@bot.command(name='addBoss', help='Use it like that "add Bigchimera chimera timetoresetinminutes"')
+async def addBoss(ctx, boss_name: str, boss_command: str, boss_time: int):
+    
+    boss_timer.addBoss(boss_name, boss_command, boss_time)
 
 @bot.command(name="display")
-async def displayBossTime(ctx, boss_command: str):
-    CHANNEL_MAIN.edit(0,boss_timer.textWall())
+async def displayBossTime(ctx):
+    global CHANNEL_MAIN
+    await CHANNEL_MAIN.send(boss_timer.textWall())
+
+# Cog error handler
+async def cog_command_error(self, ctx, error):
+    await ctx.send(f"An error occurred in the Test cog: {error}")
 
 
 bot.run(TOKEN)
