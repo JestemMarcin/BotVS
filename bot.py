@@ -16,8 +16,11 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if message.channel.name == 'bosstimer-by-o120d6' and message.author != bot.user:
-        await message.delete()
+    if message.channel.name == 'bosstimer-by-o120d6':
+        if message.author != bot.user and message.content.startswith('!'):
+            await message.delete()
+        else:
+            await bot.process_commands(message)
     else:
         await bot.process_commands(message)
 
@@ -25,12 +28,16 @@ async def on_message(message):
 async def init_bot(ctx):
     channel_name = 'bosstimer-by-o120d6'
     channel = discord.utils.get(ctx.guild.channels, name=channel_name)
-    if not channel:
+    if channel:
+        await clear_channel(channel)
+    else:
         channel = await ctx.guild.create_text_channel(channel_name)
         await channel.send(f"Inicjalizacja pomyślna na kanale {channel_name}")
         await channel.set_permissions(ctx.guild.default_role, send_messages=False)  # Ustawienie uprawnień
-    else:
-        await channel.send(f"Inicjalizacja pomyślna na kanale {channel_name}")
+
+async def clear_channel(channel):
+    async for message in channel.history():
+        await message.delete()
 
 @bot.command(name='reset', help='Użycie: !reset chimera')
 async def reset_boss(ctx, boss_command: str):
