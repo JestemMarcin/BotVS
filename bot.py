@@ -16,11 +16,15 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if message.channel.name == 'bosstimer-by-o120d6':
-        if message.author != bot.user and message.content.startswith('!'):
-            await message.delete()
-        else:
-            await bot.process_commands(message)
+    if message.channel.name == 'bosstimer-by-o120d6' and message.author != bot.user:
+        await message.delete()
+    elif message.channel.name == 'world-boss-spawn-log':
+        boss_command = message.content.strip()  # Usunięcie białych znaków z początku i końca wiadomości
+        for boss in boss_timer.bosses:
+            if boss.command in boss_command:
+                boss_timer.resetTime(boss_command)
+                await display_boss_time(message.channel)
+                break
     else:
         await bot.process_commands(message)
 
@@ -45,6 +49,7 @@ async def reset_boss(ctx, boss_command: str):
         if boss.command == boss_command:
             boss_timer.resetTime(boss_command)
             await ctx.send(f"Czas bossa {boss.name} został zresetowany.")
+            await display_boss_time(ctx.channel)
 
 @bot.command(name='addBoss', help='Użycie: !addBoss Bigchimera chimera timetoresetinminutes')
 async def add_boss(ctx, boss_name: str, boss_command: str, boss_time: int):
@@ -52,9 +57,9 @@ async def add_boss(ctx, boss_name: str, boss_command: str, boss_time: int):
     await ctx.send(f"Dodano nowego bossa: {boss_name}")
 
 @bot.command(name='display')
-async def display_boss_time(ctx):
+async def display_boss_time(channel):
     channel_name = 'bosstimer-by-o120d6'
-    channel = discord.utils.get(ctx.guild.channels, name=channel_name)
+    channel = discord.utils.get(bot.guilds[0].channels, name=channel_name)
     if channel:
         async for message in channel.history(limit=1):
             try:
@@ -63,7 +68,7 @@ async def display_boss_time(ctx):
                 pass
         await channel.send(boss_timer.textWall())
     else:
-        await ctx.send(f"Nie znaleziono kanału o nazwie {channel_name}.")
+        print(f"Nie znaleziono kanału o nazwie {channel_name}.")
 
 @bot.event
 async def on_command_error(ctx, error):
