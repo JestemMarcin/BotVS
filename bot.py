@@ -79,4 +79,15 @@ async def on_command_error(ctx, error):
     else:
         await ctx.send(f"Wystąpił błąd: {error}")
 
+@bot.command(name='deleteBoss', help='Użycie: !deleteBoss boss_name')
+async def delete_boss(ctx, boss_name: str):
+    for boss in boss_timer.bosses:
+        if boss.command.lower() == boss_name.lower():
+            boss_timer.bosses.remove(boss)
+            await ctx.send(f"Usunięto bossa: {boss_name}")
+            await display_boss_time(ctx.channel)
+            return
+    await ctx.send(f"Nie znaleziono bossa o nazwie: {boss_name}")
+
+
 bot.run(TOKEN)
