@@ -1,6 +1,9 @@
 ('C:\\Users\\HP\\Desktop\\BotVS\\build\\bot\\PYZ-00.pyz',
  [('Boss', 'C:\\Users\\HP\\Desktop\\BotVS\\Boss.py', 'PYMODULE'),
   ('BossTimer', 'C:\\Users\\HP\\Desktop\\BotVS\\BossTimer.py', 'PYMODULE'),
+  ('ReminderSender',
+   'C:\\Users\\HP\\Desktop\\BotVS\\ReminderSender.py',
+   'PYMODULE'),
   ('__future__',
    'C:\\Program '
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2032.0_x64__qbz5n2kfra8p0\\Lib\\__future__.py',
